@@ -3,7 +3,7 @@ from os.path import join
 from glob import glob
 import tifffile
 from matplotlib import image
-from csbdeep.utils import _raise
+from ..third_party.csbdeep.utils import _raise
 
 
 def imread(file_path) -> np.array:

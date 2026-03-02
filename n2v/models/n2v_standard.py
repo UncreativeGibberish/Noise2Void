@@ -5,12 +5,12 @@ from typing import Tuple, List, Dict, Union
 
 import numpy as np
 import tensorflow as tf
-from csbdeep.data import PadAndCropResizer
-from csbdeep.models import CARE
-from csbdeep.models.base_model import suppress_without_basedir
-from csbdeep.utils import _raise, axes_check_and_normalize, axes_dict, load_json, save_json
-from csbdeep.utils.six import Path, FileNotFoundError
-from csbdeep.utils.tf import CARETensorBoardImage
+from ..third_party.csbdeep.data import PadAndCropResizer
+from ..third_party.csbdeep.models import CARE
+from ..third_party.csbdeep.models.base_model import suppress_without_basedir
+from ..third_party.csbdeep.utils import _raise, axes_check_and_normalize, axes_dict, load_json, save_json
+from ..third_party.csbdeep.utils.six import Path, FileNotFoundError
+from ..third_party.csbdeep.utils.tf import CARETensorBoardImage
 from six import string_types
 from tensorflow.keras.callbacks import TerminateOnNaN
 
@@ -172,7 +172,8 @@ class N2V(CARE):
 
         return _build_this
 
-    def train(self, X, validation_X, epochs=None, steps_per_epoch=None):
+    def train(self, X, validation_X, epochs=None, steps_per_epoch=None, callbacks=None):
+        
         """Train the neural network with the given data.
 
         Parameters
@@ -185,7 +186,8 @@ class N2V(CARE):
             Optional argument to use instead of the value from ``config``.
         steps_per_epoch : int
             Optional argument to use instead of the value from ``config``.
-
+        callbacks : list
+            Optional argument for providing user defined callbacks
         Returns
         -------
         ``History`` object
@@ -253,20 +255,22 @@ class N2V(CARE):
         self.callbacks.append(CARETensorBoardImage(model=self.keras_model, data=(validation_X, validation_X),
                                                    log_dir=str(self.logdir / 'logs' / 'images'),
                                                    n_images=3, prob_out=False))
+        #Adding user callbacks
+        self.callbacks.extend(callbacks or [])
 
         history = self.keras_model.fit(iter(training_data), validation_data=(validation_X, validation_Y),
                                        epochs=epochs, steps_per_epoch=steps_per_epoch,
                                        callbacks=self.callbacks, verbose=1)
 
         if self.basedir is not None:
-            self.keras_model.save_weights(str(self.logdir / 'weights_last.h5'))
+            self.keras_model.save_weights(str(self.logdir / 'weights_last.weights.h5'))
 
             if self.config.train_checkpoint is not None:
                 print()
                 self._find_and_load_weights(self.config.train_checkpoint)
                 try:
                     # remove temporary weights
-                    (self.logdir / 'weights_now.h5').unlink()
+                    (self.logdir / 'weights_now.weights.h5').unlink()
                 except FileNotFoundError:
                     pass
 
@@ -293,6 +297,7 @@ class N2V(CARE):
         if optimizer is None:
             from tensorflow.keras.optimizers import Adam
             optimizer = Adam(learning_rate=self.config.train_learning_rate)
+            optimizer.clipnorm = 0.5
         self.callbacks = self.prepare_model(self.keras_model, optimizer, self.config.train_loss, **kwargs)
 
         if self.basedir is not None:
@@ -302,7 +307,7 @@ class N2V(CARE):
                     ModelCheckpoint(str(self.logdir / self.config.train_checkpoint), save_best_only=True,
                                     save_weights_only=True))
                 self.callbacks.append(
-                    ModelCheckpoint(str(self.logdir / 'weights_now.h5'), save_best_only=False, save_weights_only=True))
+                    ModelCheckpoint(str(self.logdir / 'weights_now.weights.h5'), save_best_only=False, save_weights_only=True))
 
             if self.config.train_tensorboard:
                 from tensorflow.keras.callbacks import TensorBoard

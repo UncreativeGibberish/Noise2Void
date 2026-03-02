@@ -1,4 +1,4 @@
-from csbdeep.internals.train import RollingSequence
+from ..third_party.csbdeep.internals.train import RollingSequence
 from tensorflow.keras.utils import Sequence
 
 import numpy as np
@@ -39,8 +39,8 @@ class N2V_DataWrapper(RollingSequence):
         if self.structN2Vmask is not None:
             print("StructN2V Mask is: ", self.structN2Vmask)
 
-        num_pix = int(np.product(shape)/100.0 * perc_pix)
-        assert num_pix >= 1, "Number of blind-spot pixels is below one. At least {}% of pixels should be replaced.".format(100.0/np.product(shape))
+        num_pix = int(np.prod(shape)/100.0 * perc_pix)
+        assert num_pix >= 1, "Number of blind-spot pixels is below one. At least {}% of pixels should be replaced.".format(100.0/np.prod(shape))
         print("{} blind-spots will be generated per training patch of size {}.".format(num_pix, shape))
 
         if self.dims == 2:

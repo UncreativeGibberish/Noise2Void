@@ -7,7 +7,7 @@ from .unet_blocks import unet_block
 
 import tensorflow as tf
 
-from csbdeep.utils.utils import _raise, backend_channels_last
+from ..third_party.csbdeep.utils.utils import _raise, backend_channels_last
 import numpy as np
 
 

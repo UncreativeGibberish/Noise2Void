@@ -33,7 +33,7 @@ print(args)
 from n2v.models import N2VConfig, N2V
 print('everything imported')
 import numpy as np
-from csbdeep.utils import plot_history
+from third_party.csbdeep.utils import plot_history
 from n2v.utils.n2v_utils import manipulate_val_data
 from n2v.internals.N2V_DataGenerator import N2V_DataGenerator
 from matplotlib import pyplot as plt

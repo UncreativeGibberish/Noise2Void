@@ -1,6 +1,6 @@
-from csbdeep.internals.blocks import conv_block2, conv_block3
-from csbdeep.utils import backend_channels_last
-from csbdeep.utils.tf import keras_import
+from ..third_party.csbdeep.internals.blocks import conv_block2, conv_block3
+from ..third_party.csbdeep.utils import backend_channels_last
+from ..third_party.csbdeep.utils.tf import keras_import
 
 from n2v.nets.blurpool import MaxBlurPool2D
 

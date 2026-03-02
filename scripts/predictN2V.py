@@ -4,8 +4,7 @@ import os
 import sys
 import argparse
 from glob import glob
-import csbdeep.io
-
+from third_party.csbdeep import io
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("--baseDir", help="directory in which all your network will live", default='models')
 parser.add_argument("--name", help="name of your network", default='N2V')
@@ -91,4 +90,4 @@ for i, img in enumerate(imgs):
     filename=os.path.basename(files[i]).replace('.tif','_N2V.tif')
     outpath=os.path.join(outpath,filename)
     print('writing file to ',outpath, outDims, pred.shape)
-    csbdeep.io.save_tiff_imagej_compatible(outpath, pred.astype(np.float32), outDims)
+    io.save_tiff_imagej_compatible(outpath, pred.astype(np.float32), outDims)

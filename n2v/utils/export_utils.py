@@ -4,14 +4,14 @@ from enum import Enum
 
 import tensorflow as tf
 from zipfile import ZipFile
-from csbdeep.utils import save_json
+from ..third_party.csbdeep.utils import save_json
 
 from ..models.n2v_config import N2VConfig
 
 
 class Extensions(Enum):
     BIOIMAGE_EXT = ".bioimage.io.zip"
-    KERAS_EXT = ".h5"
+    KERAS_EXT = ".weights.h5"
     TF_EXT = ".zip"
 
 
